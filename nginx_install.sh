@@ -71,10 +71,10 @@ server {
 		#try_files \$uri \$uri/ =404;
 
 
-		add_header X-Cache "HIT from Backend";
-        add_header X-XSS-Protection "1; mode=block" always;
-        add_header X-Content-Type-Options "nosniff" always;
-		add_header X-Frame-Options "SAMEORIGIN";
+	       add_header X-Cache "HIT from Backend";
+      	       add_header X-XSS-Protection "1; mode=block" always;
+               add_header X-Content-Type-Options "nosniff" always;
+	       add_header X-Frame-Options "SAMEORIGIN";
 
 
 	}
@@ -150,3 +150,7 @@ systemctl enable php${PHP_VERSION}-fpm
 systemctl restart nginx
 
 echo "Installation complete!"
+
+echo "nginx:- http://$DOMAIN_NAME/"
+echo "phpmyadmin:- http://$DOMAIN_NAME/phpmyadmin"
+echo "Make sure to install phpyadmin with the apt-get command"
