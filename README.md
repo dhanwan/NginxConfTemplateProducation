@@ -1,6 +1,6 @@
 
 ## Nginx setup with php-fpm
-### this script will install nginx with php-fpm amd all the required and most used php-extenstion 
+### this script will install nginx with php-fpm and all the required and most used php-extenstion 
 
 #### step 1:- 
 nginx_install.sh this script wiil install nginx with php-fpm
