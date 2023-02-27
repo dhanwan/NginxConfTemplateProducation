@@ -1,12 +1,12 @@
 #!/bin/bash
 
 if [ "$EUID" -ne 0 ]
-  then echo "Please run as root"
+  then echo -e "\nPlease run as root\n"
   exit
 fi
 
 if [ $# -lt 2 ]; then
-  echo "Please provide a PHP version as an argument, e.g. ./install.sh 7.4 domain.com"
+  echo -e "\nPlease provide a PHP version as an argument, e.g. ./install.sh 7.4 domain.com\n"
   exit 1
 fi
 
