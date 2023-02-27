@@ -5,10 +5,10 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-if [[ -n "$1" && -n "$2" ]]; then
+if [ $# -lt 2 ]; then
   echo "Please provide a PHP version as an argument, e.g. ./install.sh 7.4 domain.com"
+  exit 1
 fi
-
 
 # Get the PHP version from the argument
 PHP_VERSION=$1
@@ -86,7 +86,7 @@ server {
 		include snippets/fastcgi-php.conf;
 	#
 	#	# With php-fpm (or other unix sockets):
-		fastcgi_pass unix:/var/run/php/php-fpm${PHP_VERSION}.sock;
+		fastcgi_pass unix:/var/run/php/php${PHP_VERSION}-fpm.sock;
 	#	# With php-cgi (or other tcp sockets):
 	#	fastcgi_pass 127.0.0.1:9000;
 		fastcgi_cache_min_uses 5;
