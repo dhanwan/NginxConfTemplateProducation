@@ -14,23 +14,37 @@ fi
 PHP_VERSION=$1
 DOMAIN_NAME=$2
 
-# Add ondrej/php repository for PHP packages
-echo "Installing required packages..."
-sudo add-apt-repository ppa:ondrej/php -y
-sudo apt update
+# Progress Report with message
+total_steps=3
+current_step=0
 
-apt install -y nginx php${PHP_VERSION} php${PHP_VERSION}-fpm php${PHP_VERSION}-mysql php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-zip php${PHP_VERSION}-curl
+echo -e "\nProgress: $((current_step * 100 / total_steps))%"
+echo -e "\nStep $((++current_step)) of $total_steps: Starting process 1...\n"
+
+# Add ondrej/php repository for PHP packages
+echo -e "\n\t-------Installing required packages------\t\n"
+
+
+echo -e "\t-------Wait for Packages to installed------\t\n"
+sudo add-apt-repository ppa:ondrej/php -y >/dev/null 2>&1
+sudo apt update >/dev/null 2>&1
+
+apt install -y nginx php${PHP_VERSION} php${PHP_VERSION}-fpm php${PHP_VERSION}-mysql php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-zip php${PHP_VERSION}-curl >/dev/null 2>&1
 
 # Install MariaDB
-apt install -y mariadb-server mariadb-client
+apt install -y mariadb-server mariadb-client >/dev/null 2>&1
 
-echo "Configuring nginx..."
+
+echo -e "\nProgress: $((current_step * 100 / total_steps))%\n"
+echo "Step $((++current_step)) of $total_steps: Starting process 2..."
+echo -e "\n\t-----Configuring nginx-------\t\n"
+
+
+
 
 mkdir -p /var/domlogs/nginx/
-# touch /var/domlogs/nginx/${DOMAIN_NAME}.acccess.log
-# touch /var/domlogs/nginx/${DOMAIN_NAME}.error.log
 
-echo "Nginx Conf file creation......."
+
 # Configure Nginx
 
 if [ -f "/etc/nginx/sites-available/${DOMAIN_NAME}.conf" ]; then
@@ -111,7 +125,6 @@ server {
 
 EOF
 
-echo "Enable nginx site"
 if [ -f "/etc/nginx/sites-available/${DOMAIN_NAME}.conf" ]; then
 	unlink /etc/nginx/sites-enabled/${DOMAIN_NAME}.conf 
 	ln -s /etc/nginx/sites-available/${DOMAIN_NAME}.conf /etc/nginx/sites-enabled/
@@ -139,8 +152,12 @@ location /phpmyadmin {
 }
 EOF
 
+echo "Progress: $((current_step * 100 / total_steps))%"
+
 # Restart Nginx and PHP-FPM
-echo "Restarting nginx and php-fpm..."
+
+echo -e "\nStep $((++current_step)) of $total_steps: Starting process 3...\n"
+echo -e "\t------Restarting nginx and php${PHP_VERSION}-fpm------\t\n"
 systemctl restart nginx php${PHP_VERSION}-fpm
 
 # Enable PHP-FPM on boot
@@ -149,8 +166,15 @@ systemctl enable php${PHP_VERSION}-fpm
 
 systemctl restart nginx
 
-echo "Installation complete!"
 
-echo "nginx:- http://$DOMAIN_NAME/"
-echo "phpmyadmin:- http://$DOMAIN_NAME/phpmyadmin"
-echo "Make sure to install phpyadmin with the apt-get command"
+
+
+#echo "nginx:- http://$DOMAIN_NAME/"
+echo -e "\t\033[1;31mNginx:- http://$DOMAIN_NAME/\033[0m"
+echo -e "\t\033[1;31mphpmyadmin:- http://$DOMAIN_NAME/phpmyadmin\033[0m\n"
+#echo "phpmyadmin:- http://$DOMAIN_NAME/phpmyadmin"
+echo -e "\nMake sure to install phpyadmin with the apt-get command\n"
+echo -e "Progress: $((current_step * 100 / total_steps))%\n"
+echo -e "All processes completed.\n"
+
+echo -e "\t\n-----------Installation complete!-----------\n"
