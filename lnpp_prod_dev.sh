@@ -52,6 +52,12 @@ if [ -f "/etc/nginx/sites-available/${DOMAIN_NAME}.conf" ]; then
 else
   echo "File /etc/nginx/sites-available/${DOMAIN_NAME}.conf does not exist"
 fi
+# checking for Default conf
+
+if [ -f "/etc/nginx/sites-enabled/default" ]; then
+  echo "Disabling Default NGINX conf"
+  unlink /etc/nginx/sites-enabled/default
+fi
 
 cat > /etc/nginx/sites-available/${DOMAIN_NAME}.conf <<EOF
 # fastcgi_cache_path /var/cache/nginx levels=1:2 keys_zone=CACHEZONE:10m inactive=60m max_size=40m;
