@@ -8,7 +8,7 @@ nginx_install.sh this script wiil install nginx with php-fpm
 `chmod +x nginx_install.sh` 
 
 #### step 2:- 
-sudo ./nginx+install.sh <php_version> <Domain_nameOrIpAddresss>
+sudo `./nginx+install.sh <php_version> <Domain_nameOrIpAddresss>`
 
 example:- `sudo ./nginx+install.sh 8.0 example.com`
 
