@@ -13,6 +13,8 @@ fi
 # Get the PHP version from the argument
 PHP_VERSION=$1
 DOMAIN_NAME=$2
+LOG_DIR="/var/domlogs/nginx"
+WEB_DIR="/var/www/${DOMAIN_NAME}"
 
 # Progress Report with message
 total_steps=3
@@ -26,10 +28,11 @@ echo -e "\n\t-------Installing required packages------\t\n"
 
 
 echo -e "\t-------Wait for Packages to installed------\t\n"
-sudo add-apt-repository ppa:ondrej/php -y >/dev/null 2>&1
-sudo apt update >/dev/null 2>&1
 
-apt install -y nginx php${PHP_VERSION} php${PHP_VERSION}-fpm php${PHP_VERSION}-mysql php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-zip php${PHP_VERSION}-curl >/dev/null 2>&1
+sudo add-apt-repository ppa:ondrej/php -y
+sudo apt update 
+
+apt install -y nginx php${PHP_VERSION} php${PHP_VERSION}-fpm php${PHP_VERSION}-mysql php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-zip php${PHP_VERSION}-curl
 
 # Install MariaDB
 apt install -y mariadb-server mariadb-client >/dev/null 2>&1
@@ -42,7 +45,17 @@ echo -e "\n\t-----Configuring nginx-------\t\n"
 
 
 
-mkdir -p /var/domlogs/nginx/
+mkdir -p ${LOG_DIR}
+
+if [ -d ${WEB_DIR} ]; then
+	echo "Same Name Dir Alredy exists..."
+else
+	echo "Creating ${WEB_DIR} "
+	mkdir -p ${WEB_DIR}
+fi
+
+chown www-data:www-data ${LOG_DIR} -R
+
 
 
 # Configure Nginx
@@ -59,6 +72,7 @@ if [ -f "/etc/nginx/sites-enabled/default" ]; then
   unlink /etc/nginx/sites-enabled/default
 fi
 
+
 cat > /etc/nginx/sites-available/${DOMAIN_NAME}.conf <<EOF
 # fastcgi_cache_path /var/cache/nginx levels=1:2 keys_zone=CACHEZONE:10m inactive=60m max_size=40m;
 # fastcgi_cache_key "\$scheme\$request_method\$host\$request_uri";
@@ -68,10 +82,10 @@ cat > /etc/nginx/sites-available/${DOMAIN_NAME}.conf <<EOF
 server {
 	listen 80 ;
 	
-	root /var/www/html;
+	root ${WEB_DIR};
 	
-        access_log /var/domlogs/nginx/${DOMAIN_NAME}.acccess.log combined;
-        error_log /var/domlogs/nginx/${DOMAIN_NAME}.error.log error;
+        access_log ${LOG_DIR}/${DOMAIN_NAME}.acccess.log combined;
+        error_log ${LOG_DIR}/${DOMAIN_NAME}.error.log error;
 
 
 
@@ -140,6 +154,8 @@ fi
 # Configure phpMyAdmin
 cat > /etc/nginx/snippets/phpmyadmin.conf <<EOF
 location /phpmyadmin {
+	allow 127.0.0.1;
+	deny all;
     root /usr/share/;
     index index.php index.html index.htm;
 
@@ -178,6 +194,7 @@ systemctl restart nginx
 #echo "nginx:- http://$DOMAIN_NAME/"
 echo -e "\t\033[1;31mNginx:- http://$DOMAIN_NAME/\033[0m"
 echo -e "\t\033[1;31mphpmyadmin:- http://$DOMAIN_NAME/phpmyadmin\033[0m\n"
+echo -e "\t\033[1;31mWEB Directory:- ${WEB_DIR}\033[0m"
 #echo "phpmyadmin:- http://$DOMAIN_NAME/phpmyadmin"
 echo -e "\nMake sure to install phpyadmin with the apt-get command\n"
 echo -e "Progress: $((current_step * 100 / total_steps))%\n"
