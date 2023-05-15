@@ -29,8 +29,8 @@ echo -e "\n\t-------Installing required packages------\t\n"
 
 echo -e "\t-------Wait for Packages to installed------\t\n"
 
-sudo add-apt-repository ppa:ondrej/php -y
-sudo apt update 
+ add-apt-repository ppa:ondrej/php -y
+ apt update 
 
 apt install -y nginx php${PHP_VERSION} php${PHP_VERSION}-fpm php${PHP_VERSION}-mysql php${PHP_VERSION}-xml php${PHP_VERSION}-mbstring php${PHP_VERSION}-zip php${PHP_VERSION}-curl
 
